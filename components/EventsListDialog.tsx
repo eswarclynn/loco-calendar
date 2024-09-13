@@ -12,21 +12,114 @@ import { toLocalISOString } from "../lib/utils";
 import { useContext, useState } from "react";
 import { EventsContext } from "./EventsContext";
 import { AddEventDialog } from "./AddEventDialog";
+import { Trash } from "lucide-react";
 
-export const EventListDialog = () => {
+const EventsList = () => {
   const {
     selectedDate,
-    setNewEvent,
-    getEventsForDate,
     selectedEvent,
+    getEventsForDate,
     setSelectedEvent,
-    setSelectedDate,
     handleUpdateEvent,
     handleDeleteEvent,
   } = useContext(EventsContext);
-  const [isAddEventDialogOpen, setIsAddEventDialogOpen] = useState(false);
 
   const events = selectedDate ? getEventsForDate(selectedDate) : [];
+
+  if (events.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-32">
+        <p className="text-muted-foreground">No events for this day</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="col-span-2 space-y-2 max-h-[300px] overflow-y-auto">
+        {events.map((event) => (
+          <div
+            key={event.id}
+            className={`p-2 rounded cursor-pointer hover:bg-primary/10 ${
+              selectedEvent?.id === event.id ? "bg-primary/20" : ""
+            }`}
+            onClick={() => setSelectedEvent(event)}
+          >
+            <h3 className="font-medium">{event.title}</h3>
+            <p className="text-sm text-muted-foreground truncate">
+              {event.description}
+            </p>
+          </div>
+        ))}
+      </div>
+      {selectedEvent ? (
+        <>
+          <div className="col-span-3 flex flex-col justify-between space-y-3">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="edit-event-date" className="text-right">
+                Date
+              </Label>
+              <Input
+                id="edit-event-date"
+                type="date"
+                value={toLocalISOString(selectedEvent.date).split("T")[0]}
+                onChange={(e) =>
+                  setSelectedEvent((prev) =>
+                    prev ? { ...prev, date: new Date(e.target.value) } : null
+                  )
+                }
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="edit-event-title" className="text-right">
+                Title
+              </Label>
+              <Input
+                id="edit-event-title"
+                value={selectedEvent.title}
+                onChange={(e) =>
+                  setSelectedEvent((prev) =>
+                    prev ? { ...prev, title: e.target.value } : null
+                  )
+                }
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="edit-event-description" className="text-right">
+                Description
+              </Label>
+              <Textarea
+                id="edit-event-description"
+                value={selectedEvent.description}
+                onChange={(e) =>
+                  setSelectedEvent((prev) =>
+                    prev ? { ...prev, description: e.target.value } : null
+                  )
+                }
+                className="col-span-3"
+              />
+            </div>
+            <div className="flex justify-between">
+              <Button onClick={handleDeleteEvent} variant="destructive">
+                <Trash className="mr-2 h-4 w-4" /> Delete Event
+              </Button>
+              <Button onClick={handleUpdateEvent} className="bg-primary">
+                Update Event
+              </Button>
+            </div>
+          </div>
+        </>
+      ) : null}
+    </div>
+  );
+};
+
+export const EventListDialog = () => {
+  const { selectedDate, setNewEvent, setSelectedEvent, setSelectedDate } =
+    useContext(EventsContext);
+  const [isAddEventDialogOpen, setIsAddEventDialogOpen] = useState(false);
 
   const handleOpenChange = (open?: boolean) => {
     if (!open) {
@@ -58,95 +151,7 @@ export const EventListDialog = () => {
             </div>
           </DialogHeader>
           <hr />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2 max-h-[300px] overflow-y-auto">
-              {events.length > 0 ? (
-                events.map((event) => (
-                  <div
-                    key={event.id}
-                    className={`p-2 rounded cursor-pointer hover:bg-primary/10 ${
-                      selectedEvent?.id === event.id ? "bg-primary/20" : ""
-                    }`}
-                    onClick={() => setSelectedEvent(event)}
-                  >
-                    <h3 className="font-medium">{event.title}</h3>
-                    <p className="text-sm text-muted-foreground truncate">
-                      {event.description}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-muted-foreground text-center">
-                  No events for this day
-                </p>
-              )}
-            </div>
-            {selectedEvent ? (
-              <>
-                <div className="grid gap-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-event-date" className="text-right">
-                      Date
-                    </Label>
-                    <Input
-                      id="edit-event-date"
-                      type="date"
-                      value={toLocalISOString(selectedEvent.date).split("T")[0]}
-                      onChange={(e) =>
-                        setSelectedEvent((prev) =>
-                          prev
-                            ? { ...prev, date: new Date(e.target.value) }
-                            : null
-                        )
-                      }
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="edit-event-title" className="text-right">
-                      Title
-                    </Label>
-                    <Input
-                      id="edit-event-title"
-                      value={selectedEvent.title}
-                      onChange={(e) =>
-                        setSelectedEvent((prev) =>
-                          prev ? { ...prev, title: e.target.value } : null
-                        )
-                      }
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label
-                      htmlFor="edit-event-description"
-                      className="text-right"
-                    >
-                      Description
-                    </Label>
-                    <Textarea
-                      id="edit-event-description"
-                      value={selectedEvent.description}
-                      onChange={(e) =>
-                        setSelectedEvent((prev) =>
-                          prev ? { ...prev, description: e.target.value } : null
-                        )
-                      }
-                      className="col-span-3"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <Button onClick={handleUpdateEvent} className="bg-primary">
-                    Update Event
-                  </Button>
-                  <Button onClick={handleDeleteEvent} variant="destructive">
-                    Delete Event
-                  </Button>
-                </div>
-              </>
-            ) : null}
-          </div>
+          <EventsList />
         </DialogContent>
       </Dialog>
       <AddEventDialog

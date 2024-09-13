@@ -53,8 +53,8 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     null
   );
 
-  const getEventsForDate = (date: Date) => {
-    return events.filter(
+  const getEventsForDate = (date: Date, newEvents?: CalendarEvent[]) => {
+    return (newEvents || events).filter(
       (event) =>
         event.date.getDate() === date.getDate() &&
         event.date.getMonth() === date.getMonth() &&
@@ -69,6 +69,8 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       { ...newEvent, id: Date.now().toString() },
     ]);
     setNewEvent({ id: "", date: new Date(), title: "", description: "" });
+    // select the new event on addition
+    setSelectedEvent({ ...newEvent, id: Date.now().toString() });
   };
 
   const handleUpdateEvent = () => {
@@ -78,16 +80,21 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
           event.id === selectedEvent.id ? selectedEvent : event
         )
       );
-      setSelectedEvent(null);
     }
   };
 
   const handleDeleteEvent = () => {
     if (selectedEvent) {
-      setEvents((prevEvents) =>
-        prevEvents.filter((event) => event.id !== selectedEvent.id)
-      );
-      setSelectedEvent(null);
+      setEvents((prevEvents) => {
+        const newEvents = prevEvents.filter(
+          (event) => event.id !== selectedEvent.id
+        );
+        // select the next available event after deletion
+        setSelectedEvent(
+          selectedDate ? getEventsForDate(selectedDate, newEvents)[0] : null
+        );
+        return newEvents;
+      });
     }
   };
 
