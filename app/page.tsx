@@ -70,7 +70,7 @@ export default function FullPageCalendar() {
 
           <div className="flex-grow relative overflow-hidden">
             <div
-              className={`grid grid-cols-7 gap-1 transition-transform duration-300 ease-in-out ${transitionClass}`}
+              className={`mt-2 grid grid-cols-7 gap-1 transition-transform duration-300 ease-in-out ${transitionClass}`}
             >
               <DatesGrid date={date} />
             </div>
