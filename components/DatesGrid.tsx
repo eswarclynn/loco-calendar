@@ -1,0 +1,102 @@
+import { useContext } from "react";
+import { EventsContext } from "./EventsContext";
+
+export const DatesGrid = ({ date }: { date: Date }) => {
+  const {
+    selectedDate,
+    setSelectedDate,
+    setSelectedEvent,
+    setIsEventListDialogOpen,
+    getEventsForDate,
+  } = useContext(EventsContext);
+  const daysInMonth = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    0
+  ).getDate();
+
+  const firstDayOfMonth = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    1
+  ).getDay();
+
+  const isToday = (someDate: Date) => {
+    const today = new Date();
+    return (
+      someDate.getDate() === today.getDate() &&
+      someDate.getMonth() === today.getMonth() &&
+      someDate.getFullYear() === today.getFullYear()
+    );
+  };
+
+  return Array.from({ length: 42 }, (_, i) => {
+    const dayNumber = i - firstDayOfMonth + 1;
+    const isCurrentMonth = dayNumber > 0 && dayNumber <= daysInMonth;
+    const currentDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      dayNumber
+    );
+    const dayEvents = getEventsForDate(currentDate);
+    const isCurrentDay = isToday(currentDate);
+
+    return (
+      <div
+        key={i}
+        className={`p-1 sm:p-2 flex flex-col items-start justify-start h-16 sm:h-24 rounded-lg ${
+          isCurrentMonth
+            ? isCurrentDay
+              ? "bg-primary text-primary-foreground"
+              : "bg-secondary/5 hover:bg-primary/20 cursor-pointer transition-colors"
+            : "text-muted-foreground"
+        } ${
+          selectedDate &&
+          isCurrentMonth &&
+          currentDate.getTime() === selectedDate.getTime()
+            ? "ring-2 ring-primary"
+            : ""
+        }`}
+        onClick={() => {
+          if (isCurrentMonth) {
+            setSelectedDate(currentDate);
+            setIsEventListDialogOpen(true);
+          }
+        }}
+      >
+        {isCurrentMonth && (
+          <>
+            <span
+              className={`text-xs sm:text-base font-semibold ${
+                isCurrentDay ? "text-primary-foreground" : ""
+              }`}
+            >
+              {dayNumber}
+            </span>
+            <div className="mt-1 w-full">
+              {dayEvents.slice(0, 1).map((event) => (
+                <div
+                  key={event.id}
+                  className="text-xs truncate bg-primary/80 text-primary-foreground p-px sm:p-1 mb-1 rounded cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedDate(currentDate);
+                    setSelectedEvent(event);
+                    setIsEventListDialogOpen(true);
+                  }}
+                >
+                  {event.title}
+                </div>
+              ))}
+              {dayEvents.length > 1 && (
+                <div className="text-xs truncate text-muted-foreground">
+                  +{dayEvents.length - 1} more
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  });
+};
