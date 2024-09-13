@@ -42,7 +42,7 @@ export const DatesGrid = ({ date }: { date: Date }) => {
       <div
         key={i}
         className={cn(
-          `p-1 sm:p-2 flex flex-col items-start justify-start h-16 sm:h-24 rounded-lg`,
+          `p-1 sm:p-2 flex flex-col items-start justify-start rounded-lg`,
           {
             "cursor-pointer": isCurrentMonth,
             "bg-primary": isCurrentMonth && isCurrentDay,
