@@ -58,6 +58,7 @@ export const DatesGrid = ({ date }: { date: Date }) => {
         onClick={() => {
           if (isCurrentMonth) {
             setSelectedDate(currentDate);
+            setSelectedEvent(dayEvents[0]);
           }
         }}
       >
