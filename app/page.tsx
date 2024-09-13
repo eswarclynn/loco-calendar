@@ -7,6 +7,7 @@ import { AddEventDialog } from "../components/AddEventDialog";
 import { EventListDialog } from "../components/EventsListDialog";
 import { DatesGrid } from "../components/DatesGrid";
 import { EventsProvider } from "../components/EventsContext";
+import { ToggleTheme } from "../components/ToggleTheme";
 
 export default function FullPageCalendar() {
   const [date, setDate] = useState(new Date());
@@ -79,6 +80,7 @@ export default function FullPageCalendar() {
         <AddEventDialog />
         <EventListDialog />
       </EventsProvider>
+      <ToggleTheme />
     </div>
   );
 }
