@@ -12,10 +12,6 @@ export const EventsContext = React.createContext<{
   setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
   newEvent: CalendarEvent;
   setNewEvent: React.Dispatch<React.SetStateAction<CalendarEvent>>;
-  isAddEventDialogOpen: boolean;
-  setIsAddEventDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  isEventListDialogOpen: boolean;
-  setIsEventListDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedDate: Date | null;
   setSelectedDate: React.Dispatch<React.SetStateAction<Date | null>>;
   selectedEvent: CalendarEvent | null;
@@ -34,10 +30,6 @@ export const EventsContext = React.createContext<{
     description: "",
   },
   setNewEvent: () => {},
-  isAddEventDialogOpen: false,
-  setIsAddEventDialogOpen: () => {},
-  isEventListDialogOpen: false,
-  setIsEventListDialogOpen: () => {},
   selectedDate: null,
   setSelectedDate: () => {},
   selectedEvent: null,
@@ -56,8 +48,6 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     title: "",
     description: "",
   });
-  const [isAddEventDialogOpen, setIsAddEventDialogOpen] = useState(false);
-  const [isEventListDialogOpen, setIsEventListDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
     null
@@ -79,7 +69,6 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       { ...newEvent, id: Date.now().toString() },
     ]);
     setNewEvent({ id: "", date: new Date(), title: "", description: "" });
-    setIsAddEventDialogOpen(false);
   };
 
   const handleUpdateEvent = () => {
@@ -110,10 +99,6 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         setEvents,
         newEvent,
         setNewEvent,
-        isAddEventDialogOpen,
-        setIsAddEventDialogOpen,
-        isEventListDialogOpen,
-        setIsEventListDialogOpen,
         selectedDate,
         setSelectedDate,
         selectedEvent,

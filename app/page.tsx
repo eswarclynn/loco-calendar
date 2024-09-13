@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Header } from "../components/Header";
 import { days, months } from "../lib/utils";
-import { AddEventDialog } from "../components/AddEventDialog";
 import { EventListDialog } from "../components/EventsListDialog";
 import { DatesGrid } from "../components/DatesGrid";
 import { EventsProvider } from "../components/EventsContext";
@@ -77,7 +76,6 @@ export default function FullPageCalendar() {
             </div>
           </div>
         </div>
-        <AddEventDialog />
         <EventListDialog />
       </EventsProvider>
       <ToggleTheme />

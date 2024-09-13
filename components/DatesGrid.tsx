@@ -2,13 +2,8 @@ import { useContext } from "react";
 import { EventsContext } from "./EventsContext";
 
 export const DatesGrid = ({ date }: { date: Date }) => {
-  const {
-    selectedDate,
-    setSelectedDate,
-    setSelectedEvent,
-    setIsEventListDialogOpen,
-    getEventsForDate,
-  } = useContext(EventsContext);
+  const { selectedDate, setSelectedDate, setSelectedEvent, getEventsForDate } =
+    useContext(EventsContext);
   const daysInMonth = new Date(
     date.getFullYear(),
     date.getMonth() + 1,
@@ -40,6 +35,7 @@ export const DatesGrid = ({ date }: { date: Date }) => {
     );
     const dayEvents = getEventsForDate(currentDate);
     const isCurrentDay = isToday(currentDate);
+    const isSunday = currentDate.getDay() === 0;
 
     return (
       <div
@@ -47,8 +43,10 @@ export const DatesGrid = ({ date }: { date: Date }) => {
         className={`p-1 sm:p-2 flex flex-col items-start justify-start h-16 sm:h-24 rounded-lg ${
           isCurrentMonth
             ? isCurrentDay
-              ? "bg-primary text-primary-foreground"
-              : "bg-secondary/5 hover:bg-primary/20 cursor-pointer transition-colors"
+              ? "bg-primary cursor-pointer"
+              : `${
+                  isSunday ? "bg-destructive/20" : "bg-secondary"
+                } hover:bg-primary/20 cursor-pointer transition-colors duration-300`
             : "text-muted-foreground"
         } ${
           selectedDate &&
@@ -60,7 +58,6 @@ export const DatesGrid = ({ date }: { date: Date }) => {
         onClick={() => {
           if (isCurrentMonth) {
             setSelectedDate(currentDate);
-            setIsEventListDialogOpen(true);
           }
         }}
       >
@@ -82,7 +79,6 @@ export const DatesGrid = ({ date }: { date: Date }) => {
                     e.stopPropagation();
                     setSelectedDate(currentDate);
                     setSelectedEvent(event);
-                    setIsEventListDialogOpen(true);
                   }}
                 >
                   {event.title}

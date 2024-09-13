@@ -9,16 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toLocalISOString } from "../lib/utils";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { EventsContext } from "./EventsContext";
+import { AddEventDialog } from "./AddEventDialog";
 
 export const EventListDialog = () => {
   const {
-    isEventListDialogOpen,
-    setIsEventListDialogOpen,
     selectedDate,
     setNewEvent,
-    setIsAddEventDialogOpen,
     getEventsForDate,
     selectedEvent,
     setSelectedEvent,
@@ -26,38 +24,44 @@ export const EventListDialog = () => {
     handleUpdateEvent,
     handleDeleteEvent,
   } = useContext(EventsContext);
+  const [isAddEventDialogOpen, setIsAddEventDialogOpen] = useState(false);
+
+  const events = selectedDate ? getEventsForDate(selectedDate) : [];
 
   const handleOpenChange = (open?: boolean) => {
     if (!open) {
       setSelectedDate(null);
+      setSelectedEvent(null);
     }
-    setIsEventListDialogOpen(!!open);
   };
+
   return (
-    <Dialog open={isEventListDialogOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[725px]">
-        <DialogHeader>
-          <DialogTitle>
-            {selectedDate ? selectedDate.toDateString() : "Events"}
-          </DialogTitle>
-        </DialogHeader>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-4">
-            <Button
-              className="w-full"
-              onClick={() => {
-                setNewEvent((prev) => ({
-                  ...prev,
-                  date: selectedDate || new Date(),
-                }));
-                setIsAddEventDialogOpen(true);
-              }}
-            >
-              Add Event
-            </Button>
+    <>
+      <Dialog open={!!selectedDate} onOpenChange={handleOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <div className="flex items-center justify-between mr-3">
+              <DialogTitle className="">
+                {selectedDate ? selectedDate.toDateString() : ""}
+              </DialogTitle>
+              <Button
+                onClick={() => {
+                  setNewEvent((prev) => ({
+                    ...prev,
+                    date: selectedDate || new Date(),
+                  }));
+                  setIsAddEventDialogOpen(true);
+                }}
+              >
+                Add Event
+              </Button>
+            </div>
+          </DialogHeader>
+          <hr />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2 max-h-[300px] overflow-y-auto">
-              {selectedDate &&
-                getEventsForDate(selectedDate).map((event) => (
+              {events.length > 0 ? (
+                events.map((event) => (
                   <div
                     key={event.id}
                     className={`p-2 rounded cursor-pointer hover:bg-primary/10 ${
@@ -70,10 +74,13 @@ export const EventListDialog = () => {
                       {event.description}
                     </p>
                   </div>
-                ))}
+                ))
+              ) : (
+                <p className="text-muted-foreground text-center">
+                  No events for this day
+                </p>
+              )}
             </div>
-          </div>
-          <div className="space-y-4">
             {selectedEvent ? (
               <>
                 <div className="grid gap-4">
@@ -140,8 +147,12 @@ export const EventListDialog = () => {
               </>
             ) : null}
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+      <AddEventDialog
+        isAddEventDialogOpen={isAddEventDialogOpen}
+        setIsAddEventDialogOpen={setIsAddEventDialogOpen}
+      />
+    </>
   );
 };
