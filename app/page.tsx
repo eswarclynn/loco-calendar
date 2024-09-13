@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Header } from "../components/Header";
 import { days, months } from "../lib/utils";
 import { EventListDialog } from "../components/EventsListDialog";
@@ -8,44 +8,73 @@ import { DatesGrid } from "../components/DatesGrid";
 import { EventsProvider } from "../components/EventsContext";
 import { ToggleTheme } from "../components/ToggleTheme";
 
+const ANIMATION_DURATION = 500;
+
 export default function FullPageCalendar() {
   const [date, setDate] = useState(new Date());
-  const [transitionClass, setTransitionClass] = useState("");
+  const [transitionDirection, setTransitionDirection] = useState<
+    "left" | "right" | null
+  >(null);
 
   const goToToday = () => {
     setDate(new Date());
   };
 
+  const getPreviousMonth = (d: Date) =>
+    new Date(d.getFullYear(), d.getMonth() - 1, 1);
+  const getNextMonth = (d: Date) =>
+    new Date(d.getFullYear(), d.getMonth() + 1, 1);
+
   const handlePrevMonth = () => {
-    setTransitionClass("slide-right");
+    setTransitionDirection("right");
     setTimeout(() => {
-      setDate(
-        (prevDate) =>
-          new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1)
-      );
-      setTransitionClass("");
-    }, 0);
+      setDate((prevDate) => getPreviousMonth(prevDate));
+    }, ANIMATION_DURATION / 10);
+    setTimeout(() => {
+      setTransitionDirection(null);
+    }, ANIMATION_DURATION);
   };
 
   const handleNextMonth = () => {
-    setTransitionClass("slide-left");
+    setTransitionDirection("left");
     setTimeout(() => {
-      setDate(
-        (prevDate) =>
-          new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1)
-      );
-      setTransitionClass("");
-    }, 0);
+      setDate((prevDate) => getNextMonth(prevDate));
+    }, ANIMATION_DURATION / 10);
+    setTimeout(() => {
+      setTransitionDirection(null);
+    }, ANIMATION_DURATION);
   };
 
   const handleMonthChange = (value: string) => {
-    setDate(
-      (prevDate) => new Date(prevDate.getFullYear(), months.indexOf(value), 1)
-    );
+    const newMonth = months.indexOf(value);
+    if (newMonth > date.getMonth()) {
+      setTransitionDirection("left");
+    } else if (newMonth < date.getMonth()) {
+      setTransitionDirection("right");
+    }
+    setTimeout(() => {
+      setDate((prevDate) => new Date(prevDate.getFullYear(), newMonth, 1));
+    }, ANIMATION_DURATION / 10);
+    setTimeout(() => {
+      setTransitionDirection(null);
+    }, ANIMATION_DURATION);
   };
 
   const handleYearChange = (value: string) => {
-    setDate((prevDate) => new Date(parseInt(value), prevDate.getMonth(), 1));
+    const newYear = parseInt(value);
+    if (newYear > date.getFullYear()) {
+      setTransitionDirection("left");
+    } else if (newYear < date.getFullYear()) {
+      setTransitionDirection("right");
+    }
+
+    setTimeout(() => {
+      setDate((prevDate) => new Date(newYear, prevDate.getMonth(), 1));
+    }, ANIMATION_DURATION / 10);
+
+    setTimeout(() => {
+      setTransitionDirection(null);
+    }, ANIMATION_DURATION);
   };
 
   return (
@@ -70,7 +99,7 @@ export default function FullPageCalendar() {
 
           <div className="flex-grow relative overflow-hidden">
             <div
-              className={`mt-2 grid grid-cols-7 gap-1 transition-transform duration-300 ease-in-out absolute inset-0 ${transitionClass}`}
+              className={`mt-2 grid grid-cols-7 gap-1 absolute inset-0 animation-${transitionDirection}`}
             >
               <DatesGrid date={date} />
             </div>
@@ -79,6 +108,38 @@ export default function FullPageCalendar() {
         <EventListDialog />
       </EventsProvider>
       <ToggleTheme />
+      <style>
+        {`
+          .animation-right {
+            animation: slideToRight ${ANIMATION_DURATION}ms ease-in-out;
+          }
+          .animation-left {
+            animation: slideToLeft ${ANIMATION_DURATION}ms ease-in-out;
+          }
+
+          @keyframes slideToLeft {
+            0% {
+              transform: translateX(10%);
+              opacity: 0.8;
+            }
+            100% {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+
+          @keyframes slideToRight {
+            0% {
+              transform: translateX(-10%);
+              opacity: 0.8;
+            }
+            100% {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+        `}
+      </style>
     </div>
   );
 }
