@@ -16,7 +16,7 @@ export const Month = () => {
       </div>
       <div className="flex-grow relative overflow-hidden">
         <div
-          className={`mt-2 grid grid-cols-7 gap-1 absolute inset-0 animation-${transitionDirection}`}
+          className={`mt-2 grid grid-cols-7 gap-1 sm:absolute sm:inset-0 animation-${transitionDirection}`}
         >
           <DatesGrid date={date} />
         </div>

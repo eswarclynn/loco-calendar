@@ -45,7 +45,7 @@ export const DatesGrid = ({ date }: { date: Date }) => {
           dayEvents.length === 0 ? "add" : "add or view"
         } events`}
         className={cn(
-          `p-1 sm:p-2 flex flex-col items-start justify-start rounded-lg`,
+          `p-1 sm:p-2 flex flex-col items-start justify-start h-28 sm:h-full rounded-lg`,
           {
             "cursor-pointer": isCurrentMonth,
             "bg-primary": isCurrentMonth && isCurrentDay,
