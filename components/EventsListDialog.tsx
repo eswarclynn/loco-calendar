@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { toLocalISOString } from "../lib/utils";
+import { cn, toLocalISOString } from "../lib/utils";
 import { useContext, useState } from "react";
 import { EventsContext } from "./EventsContext";
 import { AddEventDialog } from "./AddEventDialog";
@@ -35,14 +35,14 @@ const EventsList = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-      <div className="col-span-2 space-y-2 max-h-[300px] overflow-y-auto">
+    <div className="flex flex-col sm:flex-row ">
+      <div className=" space-y-2 max-h-[300px] overflow-y-auto sm:w-1/3 sm:border-r sm:pr-5 sm:mr-5">
         {events.map((event) => (
           <div
             key={event.id}
-            className={`p-2 rounded cursor-pointer hover:bg-primary/10 ${
-              selectedEvent?.id === event.id ? "bg-primary/20" : ""
-            }`}
+            className={cn("p-2 rounded cursor-pointer hover:bg-primary/10", {
+              "bg-primary/20": selectedEvent?.id === event.id,
+            })}
             onClick={() => setSelectedEvent(event)}
           >
             <h3 className="font-medium">{event.title}</h3>
@@ -52,9 +52,10 @@ const EventsList = () => {
           </div>
         ))}
       </div>
+      <hr className="my-5" />
       {selectedEvent ? (
         <>
-          <div className="col-span-3 flex flex-col justify-between space-y-3">
+          <div className="flex flex-1 flex-col justify-between space-y-3">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-event-date" className="text-right">
                 Date

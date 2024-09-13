@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { EventsContext } from "./EventsContext";
+import { cn } from "../lib/utils";
 
 export const DatesGrid = ({ date }: { date: Date }) => {
   const { selectedDate, setSelectedDate, setSelectedEvent, getEventsForDate } =
@@ -40,21 +41,21 @@ export const DatesGrid = ({ date }: { date: Date }) => {
     return (
       <div
         key={i}
-        className={`p-1 sm:p-2 flex flex-col items-start justify-start h-16 sm:h-24 rounded-lg ${
-          isCurrentMonth
-            ? isCurrentDay
-              ? "bg-primary cursor-pointer"
-              : `${
-                  isSunday ? "bg-destructive/20" : "bg-secondary"
-                } hover:bg-primary/20 cursor-pointer transition-colors duration-300`
-            : "text-muted-foreground"
-        } ${
-          selectedDate &&
-          isCurrentMonth &&
-          currentDate.getTime() === selectedDate.getTime()
-            ? "ring-2 ring-primary"
-            : ""
-        }`}
+        className={cn(
+          `p-1 sm:p-2 flex flex-col items-start justify-start h-16 sm:h-24 rounded-lg`,
+          {
+            "cursor-pointer": isCurrentMonth,
+            "bg-primary": isCurrentMonth && isCurrentDay,
+            "hover:bg-primary/20 cursor-pointer transition-colors duration-300":
+              isCurrentMonth && !isCurrentDay,
+            "bg-secondary": isCurrentMonth && !isCurrentDay && !isSunday,
+            "bg-destructive/20": isCurrentMonth && !isCurrentDay && isSunday,
+            "ring-2 ring-primary":
+              selectedDate &&
+              isCurrentMonth &&
+              currentDate.getTime() === selectedDate.getTime(),
+          }
+        )}
         onClick={() => {
           if (isCurrentMonth) {
             setSelectedDate(currentDate);
@@ -64,18 +65,17 @@ export const DatesGrid = ({ date }: { date: Date }) => {
       >
         {isCurrentMonth && (
           <>
-            <span
-              className={`text-xs sm:text-base font-semibold ${
-                isCurrentDay ? "text-primary-foreground" : ""
-              }`}
-            >
+            <span className="text-xs sm:text-base font-semibold">
               {dayNumber}
             </span>
             <div className="mt-1 w-full">
               {dayEvents.slice(0, 1).map((event) => (
                 <div
                   key={event.id}
-                  className="text-xs truncate bg-primary/80 text-primary-foreground p-px sm:p-1 mb-1 rounded cursor-pointer"
+                  className={cn(
+                    "text-xs truncate bg-primary/80 p-px sm:p-1 mb-1 rounded cursor-pointer",
+                    { "bg-secondary": isCurrentDay }
+                  )}
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedDate(currentDate);
@@ -86,7 +86,7 @@ export const DatesGrid = ({ date }: { date: Date }) => {
                 </div>
               ))}
               {dayEvents.length > 1 && (
-                <div className="text-xs truncate text-muted-foreground">
+                <div className="text-xs truncate">
                   +{dayEvents.length - 1} more
                 </div>
               )}
