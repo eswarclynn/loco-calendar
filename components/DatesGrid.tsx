@@ -41,6 +41,9 @@ export const DatesGrid = ({ date }: { date: Date }) => {
     return (
       <div
         key={i}
+        title={`Click to ${
+          dayEvents.length === 0 ? "add" : "add or view"
+        } events`}
         className={cn(
           `p-1 sm:p-2 flex flex-col items-start justify-start rounded-lg`,
           {

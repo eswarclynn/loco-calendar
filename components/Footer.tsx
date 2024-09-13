@@ -23,7 +23,12 @@ export const Footer = () => {
 
   return (
     <div className="flex justify-between items-center">
-      <Button variant="outline" size="icon" onClick={handlePrevMonth}>
+      <Button
+        variant="outline"
+        size="icon"
+        title="Previous Month"
+        onClick={handlePrevMonth}
+      >
         <ChevronLeft className="h-4 w-4" />
       </Button>
       <div className="flex space-x-2">
@@ -61,7 +66,12 @@ export const Footer = () => {
           Today
         </Button>
       </div>
-      <Button variant="outline" size="icon" onClick={handleNextMonth}>
+      <Button
+        variant="outline"
+        size="icon"
+        title="Next Month"
+        onClick={handleNextMonth}
+      >
         <ChevronRight className="h-4 w-4" />
       </Button>
     </div>
