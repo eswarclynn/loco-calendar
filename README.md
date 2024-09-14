@@ -9,6 +9,13 @@ A reponsive calendar app that allows users to create, edit, and delete events. T
 - Responsive design
 - Dark/Light mode support
 
+## Coming up
+- Authentication and Authorization
+- Database backend integration for storing events 
+- Event reminders
+- Repeating events
+- Shared/collaborative events
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started with Development
