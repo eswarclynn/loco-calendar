@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { months } from "../lib/utils";
 
 export const NavigationContext = React.createContext<{
@@ -29,6 +31,10 @@ export const NavigationProvider = ({
   const [transitionDirection, setTransitionDirection] = useState<
     "left" | "right" | null
   >(null);
+
+  useEffect(() => {
+    setDate(new Date());
+  }, []);
 
   const goToToday = () => {
     setDate(new Date());
