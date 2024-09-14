@@ -1,143 +1,79 @@
-"use client";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { months, years } from "@/lib/utils";
+import { useContext } from "react";
+import { NavigationContext } from "./NavigationContext";
 
-import React, { useState } from "react";
-import { months } from "../lib/utils";
-
-export const NavigationContext = React.createContext<{
-  date: Date;
-  transitionDirection: "left" | "right" | null;
-  goToToday: () => void;
-  handlePrevMonth: () => void;
-  handleNextMonth: () => void;
-  handleMonthChange: (value: string) => void;
-  handleYearChange: (value: string) => void;
-}>({
-  date: new Date(),
-  transitionDirection: null,
-  goToToday: () => {},
-  handlePrevMonth: () => {},
-  handleNextMonth: () => {},
-  handleMonthChange: () => {},
-  handleYearChange: () => {},
-});
-const ANIMATION_DURATION = 500;
-
-export const NavigationProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [date, setDate] = useState(new Date());
-  const [transitionDirection, setTransitionDirection] = useState<
-    "left" | "right" | null
-  >(null);
-
-  const goToToday = () => {
-    setDate(new Date());
-  };
-
-  const getPreviousMonth = (d: Date) =>
-    new Date(d.getFullYear(), d.getMonth() - 1, 1);
-  const getNextMonth = (d: Date) =>
-    new Date(d.getFullYear(), d.getMonth() + 1, 1);
-
-  const handlePrevMonth = () => {
-    setTransitionDirection("right");
-    setTimeout(() => {
-      setDate((prevDate) => getPreviousMonth(prevDate));
-    }, ANIMATION_DURATION / 10);
-    setTimeout(() => {
-      setTransitionDirection(null);
-    }, ANIMATION_DURATION);
-  };
-
-  const handleNextMonth = () => {
-    setTransitionDirection("left");
-    setTimeout(() => {
-      setDate((prevDate) => getNextMonth(prevDate));
-    }, ANIMATION_DURATION / 10);
-    setTimeout(() => {
-      setTransitionDirection(null);
-    }, ANIMATION_DURATION);
-  };
-
-  const handleMonthChange = (value: string) => {
-    const newMonth = months.indexOf(value);
-    if (newMonth > date.getMonth()) {
-      setTransitionDirection("left");
-    } else if (newMonth < date.getMonth()) {
-      setTransitionDirection("right");
-    }
-    setTimeout(() => {
-      setDate((prevDate) => new Date(prevDate.getFullYear(), newMonth, 1));
-    }, ANIMATION_DURATION / 10);
-    setTimeout(() => {
-      setTransitionDirection(null);
-    }, ANIMATION_DURATION);
-  };
-
-  const handleYearChange = (value: string) => {
-    const newYear = parseInt(value);
-    if (newYear > date.getFullYear()) {
-      setTransitionDirection("left");
-    } else if (newYear < date.getFullYear()) {
-      setTransitionDirection("right");
-    }
-
-    setTimeout(() => {
-      setDate((prevDate) => new Date(newYear, prevDate.getMonth(), 1));
-    }, ANIMATION_DURATION / 10);
-
-    setTimeout(() => {
-      setTransitionDirection(null);
-    }, ANIMATION_DURATION);
-  };
+export const Navigation = () => {
+  const {
+    date,
+    goToToday,
+    handleMonthChange,
+    handleNextMonth,
+    handlePrevMonth,
+    handleYearChange,
+  } = useContext(NavigationContext);
 
   return (
-    <NavigationContext.Provider
-      value={{
-        date,
-        transitionDirection,
-        goToToday,
-        handlePrevMonth,
-        handleNextMonth,
-        handleMonthChange,
-        handleYearChange,
-      }}
-    >
-      {children}
-      <style>
-        {`
-          .animation-right {
-            animation: slideToRight ${ANIMATION_DURATION}ms ease-in-out;
-          }
-          .animation-left {
-            animation: slideToLeft ${ANIMATION_DURATION}ms ease-in-out;
-          }
-            
-          @keyframes slideToLeft {
-            0% {
-              transform: translateX(10%);
-              opacity: 0.8;
-            }
-            100% {
-              transform: translateX(0);
-              opacity: 1;
-            }
-          }
-                  
-          @keyframes slideToRight {
-            0% {
-              transform: translateX(-10%);
-              opacity: 0.8;
-            }
-            100% {
-              transform: translateX(0);
-              opacity: 1;
-            }
-          }
-        `}
-      </style>
-    </NavigationContext.Provider>
+    <div className="flex justify-between sm:justify-center space-x-4 items-center mb-4">
+      <Button
+        variant="outline"
+        size="icon"
+        title="Previous Month"
+        onClick={handlePrevMonth}
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </Button>
+      <div className="flex space-x-2">
+        <Select
+          value={months[date.getMonth()]}
+          onValueChange={handleMonthChange}
+        >
+          <SelectTrigger className="w-[120px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {months.map((month) => (
+              <SelectItem key={month} value={month}>
+                {month}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={date.getFullYear().toString()}
+          onValueChange={handleYearChange}
+        >
+          <SelectTrigger className="w-[80px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {years.map((year) => (
+              <SelectItem key={year} value={year.toString()}>
+                {year}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button variant="outline" onClick={goToToday}>
+          Today
+        </Button>
+      </div>
+      <Button
+        variant="outline"
+        size="icon"
+        title="Next Month"
+        onClick={handleNextMonth}
+      >
+        <ChevronRight className="h-4 w-4" />
+      </Button>
+    </div>
   );
 };

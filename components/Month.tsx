@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { days } from "../lib/utils";
 import { DatesGrid } from "./DatesGrid";
-import { NavigationContext } from "./Navigation";
+import { NavigationContext } from "./NavigationContext";
 
 export const Month = () => {
   const { date, transitionDirection } = useContext(NavigationContext);
