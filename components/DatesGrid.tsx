@@ -2,6 +2,8 @@ import { useContext } from "react";
 import { EventsContext } from "./EventsContext";
 import { cn } from "../lib/utils";
 
+const MAX_DISPLAY_EVENTS = 2;
+
 export const DatesGrid = ({ date }: { date: Date }) => {
   const { selectedDate, setSelectedDate, setSelectedEvent, getEventsForDate } =
     useContext(EventsContext);
@@ -72,7 +74,7 @@ export const DatesGrid = ({ date }: { date: Date }) => {
               {dayNumber}
             </span>
             <div className="mt-1 w-full">
-              {dayEvents.slice(0, 1).map((event) => (
+              {dayEvents.slice(0, MAX_DISPLAY_EVENTS).map((event) => (
                 <div
                   key={event.id}
                   className={cn(
@@ -88,9 +90,9 @@ export const DatesGrid = ({ date }: { date: Date }) => {
                   {event.title}
                 </div>
               ))}
-              {dayEvents.length > 1 && (
+              {dayEvents.length > MAX_DISPLAY_EVENTS && (
                 <div className="text-xs truncate">
-                  +{dayEvents.length - 1} more
+                  +{dayEvents.length - MAX_DISPLAY_EVENTS} more
                 </div>
               )}
             </div>
