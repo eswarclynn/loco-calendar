@@ -8,7 +8,6 @@ import LogoLight from "./logo-light.png";
 
 export function Footer() {
   const { theme, setTheme } = useTheme();
-  console.log(theme);
   return (
     <div className="flex justify-between items-center">
       <div className="flex gap-2 items-center">

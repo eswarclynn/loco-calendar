@@ -35,6 +35,7 @@ export const NavigationProvider = ({
   const goToToday = () => {
     setDate(new Date());
   };
+  console.log("date", date);
 
   const getPreviousMonth = (d: Date) =>
     new Date(d.getFullYear(), d.getMonth() - 1, 1);
